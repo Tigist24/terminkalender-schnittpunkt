@@ -1,0 +1,6 @@
+# Abhängigkeiten
+node_modules/
+
+# Zugangsdaten – niemals ins Repo!
+.env
+

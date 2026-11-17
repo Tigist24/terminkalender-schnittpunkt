@@ -10,7 +10,7 @@ export async function getLeistungen(_req, res){
         res.status(200).json(rows)
     }   catch (err){
         console.error(err)
-        res.status(500).json({error: 'Leistungen konnten nicht geladen werden'})
+        res.status(500).json({error: 'leistungen konnten nicht geladen werden'})
     }
 }
 
@@ -18,7 +18,7 @@ export async function getMitarbeiterFuerLeistung(req, res) {
     const leistungId = Number(req.params.id)
 
     if(!Number.isInteger(leistungId) || leistungId <= 0){
-        return res.status(400).json({error: 'diese LeistungsId gibt es nicht'})
+        return res.status(400).json({error: 'diese leistungsId gibt es nicht'})
     }
     try{
         const [leistungen] = await pool.execute(

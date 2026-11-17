@@ -1,20 +1,19 @@
 import 'dotenv/config'
 import express from 'express'
-import path from 'node:path'
 
 
-import leistungenRouter  from './src/routes/leistungen.js'
+import leistungRouter  from './src/router/leistung.router.js'
 
 const PORT = process.env.PORT || 3000
 
 const app = express()
 
 app.use(express.json())
-app.use(express.static(path.join(import.meta.dirname, 'public')))
+app.use(express.static('public'))
 
-app.use('/api/leistungen', leistungenRouter)
+app.use('/api/leistungen', leistungRouter)
 
-app.use('/api', (req, res)=> {
+app.use('/api', (_req, res)=> {
     res.status(404).json({error: "keine route gefunden"})
 })
 

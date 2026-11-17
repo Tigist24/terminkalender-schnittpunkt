@@ -21,8 +21,8 @@ erDiagram
     leistung {
         int id PK
         varchar name UK "NOT NULL"
-        int dauer_min "CHECK >= 15"
-        int preis_cent "CHECK >= 0"
+        int dauer_minuten "CHECK >= 15"
+        decimal preis "CHECK >= 0"
         boolean aktiv
     }
     mitarbeiter_leistung {
@@ -36,7 +36,7 @@ erDiagram
         int leistung_id FK
         datetime beginn "NOT NULL"
         datetime ende "NOT NULL"
-        int preis_cent "Preis zum Buchungszeitpunkt"
+        decimal preis "Preis zum Buchungszeitpunkt"
         enum status "gebucht, storniert, erledigt"
         char storno_code UK
         datetime erstellt_am

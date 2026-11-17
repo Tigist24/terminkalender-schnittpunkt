@@ -26,13 +26,13 @@ CREATE TABLE mitarbeiter (
 CREATE TABLE leistung (
     id INT not null AUTO_INCREMENT,
     name VARCHAR(100) not null,
-    dauer_min INT NOT NULL, 
-    preis_cent INT not null,
+    dauer_minuten INT NOT NULL, 
+    preis DECIMAL (6,2) not null,
     aktiv BOOLEAN not null default true,
     primary key (id), 
     CONSTRAINT uq_leistung_name UNIQUE (name),
-    CONSTRAINT chk_leistung_dauer CHECK (dauer_min >= 15),
-    CONSTRAINT chk_leistung_preis check (preis_cent >= 0)
+    CONSTRAINT chk_leistung_dauer CHECK (dauer_minuten >= 15),
+    CONSTRAINT chk_leistung_preis check (preis >= 0)
 
 );
 CREATE TABLE mitarbeiter_leistung(
@@ -49,14 +49,14 @@ CREATE TABLE termin (
     leistung_id int not null, 
     beginn DATETIME not null,
     ende DATETIME not null, 
-    preis_cent int not null,
+    preis DECIMAL (6,2) not null,
     status ENUM("gebucht", "erledigt", "storniert") not null default "gebucht",
     storno_code VARCHAR(100) not null,
     erstellt_am datetime not null default CURRENT_TIMESTAMP,
     primary key (id),
     CONSTRAINT uq_storno_code_termin unique (storno_code),
     CONSTRAINT chk_termin_zeitraum CHECK (ende > beginn),
-    CONSTRAINT chk_termin_preis CHECK (preis_cent > 0),
+    CONSTRAINT chk_termin_preis CHECK (preis > 0),
     CONSTRAINT fk_termin_kunde FOREIGN KEY (kunde_id) REFERENCES kunde (id),
     CONSTRAINT fk_termin_mitarbeiter FOREIGN KEY (mitarbeiter_id) REFERENCES mitarbeiter (id),
     CONSTRAINT fk_termin_leistung FOREIGN KEY (leistung_id) REFERENCES leistung (id)
@@ -66,13 +66,13 @@ CREATE TABLE termin (
 -- ---------generierte beispeldaten-----------------------------------------
 
 -- Leistungen laut Protokoll (D-01), Preise in Cent
-INSERT INTO leistung (id, name, dauer_min, preis_cent) VALUES
-  (1, 'Herrenschnitt',       30, 2800),
-  (2, 'Damenschnitt',        45, 4200),
-  (3, 'Waschen und Föhnen',  30, 2200),
-  (4, 'Kinderschnitt',       20, 1600),
-  (5, 'Bartpflege',          15, 1200),
-  (6, 'Färben',              90, 7500);
+INSERT INTO leistung (id, name, dauer_minuten, preis) VALUES
+  (1, 'Herrenschnitt',       30, 28.00),
+  (2, 'Damenschnitt',        45, 42.00),
+  (3, 'Waschen und Föhnen',  30, 22.00),
+  (4, 'Kinderschnitt',       20, 16.00),
+  (5, 'Bartpflege',          15, 12.00),
+  (6, 'Färben',              90, 75.00);
 
 -- Team laut Protokoll (D-02)
 INSERT INTO mitarbeiter (id, name) VALUES
@@ -98,23 +98,23 @@ INSERT INTO kunde (id, name, telefon, email) VALUES
 -- keine Überschneidungen pro Person, alles in Öffnungszeit und 15-Min-Raster.
 -- Stornocodes sind zum Testen bewusst leicht lesbar.
 INSERT INTO termin
-  (kunde_id, mitarbeiter_id, leistung_id, beginn, ende, preis_cent, status, storno_code) VALUES
+  (kunde_id, mitarbeiter_id, leistung_id, beginn, ende, preis, status, storno_code) VALUES
   -- Sa 14.11. (Vergangenheit)
-  (2, 2, 1, '2026-11-14 10:00', '2026-11-14 10:30', 2800, 'erledigt',  '00000000-0000-4000-8000-000000000001'),
-  (4, 3, 5, '2026-11-14 11:00', '2026-11-14 11:15', 1200, 'storniert', '00000000-0000-4000-8000-000000000002'),
+  (2, 2, 1, '2026-11-14 10:00', '2026-11-14 10:30', 28.00, 'erledigt',  '00000000-0000-4000-8000-000000000001'),
+  (4, 3, 5, '2026-11-14 11:00', '2026-11-14 11:15', 12.00, 'storniert', '00000000-0000-4000-8000-000000000002'),
   -- Di 17.11.
-  (1, 1, 6, '2026-11-17 09:00', '2026-11-17 10:30', 7500, 'gebucht',   '00000000-0000-4000-8000-000000000003'),
-  (2, 3, 1, '2026-11-17 09:30', '2026-11-17 10:00', 2800, 'gebucht',   '00000000-0000-4000-8000-000000000004'),
-  (3, 2, 2, '2026-11-17 10:00', '2026-11-17 10:45', 4200, 'gebucht',   '00000000-0000-4000-8000-000000000005'),
-  (5, 3, 4, '2026-11-17 10:15', '2026-11-17 10:35', 1600, 'gebucht',   '00000000-0000-4000-8000-000000000006'),
+  (1, 1, 6, '2026-11-17 09:00', '2026-11-17 10:30', 75.00, 'gebucht',   '00000000-0000-4000-8000-000000000003'),
+  (2, 3, 1, '2026-11-17 09:30', '2026-11-17 10:00', 28.00, 'gebucht',   '00000000-0000-4000-8000-000000000004'),
+  (3, 2, 2, '2026-11-17 10:00', '2026-11-17 10:45', 42.00, 'gebucht',   '00000000-0000-4000-8000-000000000005'),
+  (5, 3, 4, '2026-11-17 10:15', '2026-11-17 10:35', 16.00, 'gebucht',   '00000000-0000-4000-8000-000000000006'),
   -- Sa 21.11. (Grenzfall: endet genau um 14:00)
-  (3, 2, 2, '2026-11-21 13:15', '2026-11-21 14:00', 4200, 'gebucht',   '00000000-0000-4000-8000-000000000007'),
+  (3, 2, 2, '2026-11-21 13:15', '2026-11-21 14:00', 42.00, 'gebucht',   '00000000-0000-4000-8000-000000000007'),
   -- Di 24.11. (voller Tag zum Testen der Tagesübersicht)
-  (3, 1, 3, '2026-11-24 09:00', '2026-11-24 09:30', 2200, 'gebucht',   '00000000-0000-4000-8000-000000000008'),
-  (5, 1, 2, '2026-11-24 10:00', '2026-11-24 10:45', 4200, 'gebucht',   '00000000-0000-4000-8000-000000000009'),
-  (1, 2, 6, '2026-11-24 09:00', '2026-11-24 10:30', 7500, 'gebucht',   '00000000-0000-4000-8000-000000000010'),
-  (4, 2, 1, '2026-11-24 11:00', '2026-11-24 11:30', 2800, 'gebucht',   '00000000-0000-4000-8000-000000000011'),
-  (2, 3, 5, '2026-11-24 09:00', '2026-11-24 09:15', 1200, 'gebucht',   '00000000-0000-4000-8000-000000000012'),
-  (4, 3, 4, '2026-11-24 09:15', '2026-11-24 09:35', 1600, 'gebucht',   '00000000-0000-4000-8000-000000000013'),
-  (5, 3, 3, '2026-11-24 14:00', '2026-11-24 14:30', 2200, 'gebucht',   '00000000-0000-4000-8000-000000000014'),
-  (2, 1, 1, '2026-11-24 17:30', '2026-11-24 18:00', 2800, 'gebucht',   '00000000-0000-4000-8000-000000000015');
+  (3, 1, 3, '2026-11-24 09:00', '2026-11-24 09:30', 22.00, 'gebucht',   '00000000-0000-4000-8000-000000000008'),
+  (5, 1, 2, '2026-11-24 10:00', '2026-11-24 10:45', 42.00, 'gebucht',   '00000000-0000-4000-8000-000000000009'),
+  (1, 2, 6, '2026-11-24 09:00', '2026-11-24 10:30', 75.00, 'gebucht',   '00000000-0000-4000-8000-000000000010'),
+  (4, 2, 1, '2026-11-24 11:00', '2026-11-24 11:30', 28.00, 'gebucht',   '00000000-0000-4000-8000-000000000011'),
+  (2, 3, 5, '2026-11-24 09:00', '2026-11-24 09:15', 12.00, 'gebucht',   '00000000-0000-4000-8000-000000000012'),
+  (4, 3, 4, '2026-11-24 09:15', '2026-11-24 09:35', 16.00, 'gebucht',   '00000000-0000-4000-8000-000000000013'),
+  (5, 3, 3, '2026-11-24 14:00', '2026-11-24 14:30', 22.00, 'gebucht',   '00000000-0000-4000-8000-000000000014'),
+  (2, 1, 1, '2026-11-24 17:30', '2026-11-24 18:00', 28.00, 'gebucht',   '00000000-0000-4000-8000-000000000015');

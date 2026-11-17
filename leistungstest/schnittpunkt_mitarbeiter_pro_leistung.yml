@@ -1,0 +1,14 @@
+info:
+  name: schnittpunkt_mitarbeiter_pro_leistung
+  type: http
+
+http:
+  method: GET
+  url: http://localhost:3000/api/leistungen/1/mitarbeiter
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 DROP DATABASE IF EXISTS schnittpunkt;
 CREATE DATABASE schnittpunkt
 CHARACTER SET utf8mb4

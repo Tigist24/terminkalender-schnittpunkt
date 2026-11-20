@@ -1,4 +1,4 @@
-import { pool } from '../util/db.js'
+
 
 import { aktiveLeistungen, mitarbeiterFuerLeistung } from '../service/leistung.service.js'
 
